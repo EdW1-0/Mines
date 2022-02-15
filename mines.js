@@ -6,6 +6,34 @@ let width = 4;
 let table = document.getElementById('grid');
 
 
+class Tile
+{
+  constructor(grid, x, y) {
+    this.mine = false;
+    this.cleared = false;
+    this.flag = false;
+    this.grid = grid;
+    this.x = x;
+    this.y = y;
+  }
+}
+
+let grid = new Set();
+
+function tileAt(grid, x, y)
+{
+  let foundTile = null;
+  for (let tile of grid){
+    if (tile.x == x && tile.y == y)
+    {
+      foundTile = tile;
+      break;
+    }
+  }
+
+  return foundTile;
+}
+
 
 for (let i=0; i < height; i++)
 {
@@ -17,12 +45,17 @@ for (let i=0; i < height; i++)
     td.innerHTML = "<img src='seychelles.png'></img>"
     td.onmousedown = mousedown;
     tr.append(td);
+
+    let tile = new Tile(grid, j, i);
+    grid.add(tile);
   }
 }
 
 function mousedown(event)
 {
   let tr = this.parentNode;
-
-  alert(this.cellIndex + "," + tr.rowIndex);
+  let x = this.cellIndex;
+  let y = tr.rowIndex;
+  let tile = tileAt(grid, x, y);
+  alert(tile.x + "," + tile.y);
 }
