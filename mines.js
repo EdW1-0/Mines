@@ -20,10 +20,10 @@ class Tile
 
 let grid = new Set();
 
-function tileAt(grid, x, y)
+grid.tileAt = function (x, y)
 {
   let foundTile = null;
-  for (let tile of grid){
+  for (let tile of this){
     if (tile.x == x && tile.y == y)
     {
       foundTile = tile;
@@ -32,7 +32,7 @@ function tileAt(grid, x, y)
   }
 
   return foundTile;
-}
+};
 
 
 for (let i=0; i < height; i++)
@@ -56,6 +56,6 @@ function mousedown(event)
   let tr = this.parentNode;
   let x = this.cellIndex;
   let y = tr.rowIndex;
-  let tile = tileAt(grid, x, y);
+  let tile = grid.tileAt(x, y);
   alert(tile.x + "," + tile.y);
 }
