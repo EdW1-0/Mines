@@ -16,6 +16,15 @@ class Tile
     this.x = x;
     this.y = y;
   }
+
+  north() {return this.grid.tileAt(this.x, this.y-1);}
+  northWest() {return this.grid.tileAt(this.x-1, this.y-1);}
+  west() {return this.grid.tileAt(this.x-1, this.y);}
+  southWest() {return this.grid.tileAt(this.x-1, this.y+1);}
+  south() {return this.grid.tileAt(this.x, this.y+1);}
+  southEast() {return this.tileAt(this.x+1, this.y+1);}
+  east() {return this.tileAt(this.x+1, this.y);}
+  northEast() {return this.tileAt(this.x+1, this.y-1);}
 }
 
 let grid = new Set();
@@ -58,4 +67,11 @@ function mousedown(event)
   let y = tr.rowIndex;
   let tile = grid.tileAt(x, y);
   alert(tile.x + "," + tile.y);
+  let tileWest = tile.west();
+  if (tileWest){
+    alert(tileWest.x + "," + tileWest.y);
+  }
+  else {
+    alert(tileWest);
+  }
 }
