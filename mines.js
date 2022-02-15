@@ -15,6 +15,14 @@ for (let i=0; i < height; i++)
   {
     let td = document.createElement('td');
     td.innerHTML = "<img src='seychelles.png'></img>"
+    td.onmousedown = mousedown;
     tr.append(td);
   }
+}
+
+function mousedown(event)
+{
+  let tr = this.parentNode;
+
+  alert(this.cellIndex + "," + tr.rowIndex);
 }
