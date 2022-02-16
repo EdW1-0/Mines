@@ -50,13 +50,14 @@ for (let i=0; i < height; i++)
   table.append(tr);
   for (let j=0; j<width; j++)
   {
-    let td = document.createElement('td');
-    td.innerHTML = "<img src='seychelles.png'></img>"
-    td.onmousedown = mousedown;
-    tr.append(td);
-
     let tile = new Tile(grid, j, i);
     grid.add(tile);
+
+    let td = document.createElement('td');
+
+    td.innerHTML = renderTile(j,i);
+    td.onmousedown = mousedown;
+    tr.append(td);
   }
 }
 
@@ -74,4 +75,19 @@ function mousedown(event)
   else {
     alert(tileWest);
   }
+
+  if (event.button == 0)
+    tile.cleared = true;
+
+  let html = renderTile(x,y);
+  this.innerHTML = html;
+}
+
+function renderTile(x, y)
+{
+  let tile = grid.tileAt(x, y);
+  if (tile.cleared)
+    return "<img src='one.png'></img>"
+  else
+    return "<img src='hidden.png'></img>"
 }
