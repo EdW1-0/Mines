@@ -1,7 +1,13 @@
 "use strict";
 
-let height = 3;
-let width = 4;
+let height = 10;
+let width = 10;
+
+// To stop the context menu firing when we right click a tile
+document.addEventListener("contextmenu", function(e){
+    e.preventDefault();
+}, false);
+
 
 let table = document.getElementById('grid');
 
@@ -92,17 +98,22 @@ function mousedown(event)
   let x = this.cellIndex;
   let y = tr.rowIndex;
   let tile = grid.tileAt(x, y);
-  alert(tile.x + "," + tile.y);
+  //alert(tile.x + "," + tile.y);
   let tileWest = tile.west();
-  if (tileWest){
+  /*if (tileWest){
     alert(tileWest.x + "," + tileWest.y);
   }
   else {
     alert(tileWest);
-  }
+  }*/
 
-  if (event.button == 0)
-    tile.cleared = true;
+  if (event.button == 0) {
+    if (!tile.flag)
+      tile.cleared = true;
+  } else if (event.button == 2) {
+    if (!tile.cleared)
+      tile.flag = !tile.flag;
+  }
 
   let html = renderTile(x,y);
   this.innerHTML = html;
