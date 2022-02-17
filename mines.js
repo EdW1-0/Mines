@@ -22,9 +22,33 @@ class Tile
   west() {return this.grid.tileAt(this.x-1, this.y);}
   southWest() {return this.grid.tileAt(this.x-1, this.y+1);}
   south() {return this.grid.tileAt(this.x, this.y+1);}
-  southEast() {return this.tileAt(this.x+1, this.y+1);}
-  east() {return this.tileAt(this.x+1, this.y);}
-  northEast() {return this.tileAt(this.x+1, this.y-1);}
+  southEast() {return this.grid.tileAt(this.x+1, this.y+1);}
+  east() {return this.grid.tileAt(this.x+1, this.y);}
+  northEast() {return this.grid.tileAt(this.x+1, this.y-1);}
+
+  neighbours() {
+    let neighbours = [];
+    neighbours.push(this.north());
+    neighbours.push(this.northWest());
+    neighbours.push(this.west());
+    neighbours.push(this.southWest());
+    neighbours.push(this.south());
+    neighbours.push(this.southEast());
+    neighbours.push(this.east());
+    neighbours.push(this.northEast());
+    return neighbours;
+  }
+
+  neighbourCount() {
+    let mines = 0;
+    for (let i of this.neighbours()) {
+      if (i) {
+        mines += i.mine;
+      }
+
+    }
+    return mines
+  }
 }
 
 let grid = new Set();
@@ -51,6 +75,7 @@ for (let i=0; i < height; i++)
   for (let j=0; j<width; j++)
   {
     let tile = new Tile(grid, j, i);
+    if (j==2) tile.mine=true;
     grid.add(tile);
 
     let td = document.createElement('td');
@@ -86,8 +111,36 @@ function mousedown(event)
 function renderTile(x, y)
 {
   let tile = grid.tileAt(x, y);
-  if (tile.cleared)
-    return "<img src='one.png'></img>"
-  else
+  if (tile.flag)
+    return "<img src='flag.png'></img>"
+  else if (!tile.cleared)
     return "<img src='hidden.png'></img>"
+  else if (tile.mine)
+    return "<img src='mine.png'></img>"
+  else {
+    let mines = tile.neighbourCount();
+    switch (mines) {
+      case 0:
+        return "<img src='zero.png'></img>";
+      case 1:
+        return "<img src='one.png'></img>";
+      case 2:
+        return "<img src='two.png'></img>";
+      case 3:
+        return "<img src='three.png'></img>";
+      case 4:
+        return "<img src='four.png'></img>";
+      case 5:
+        return "<img src='five.png'></img>";
+      case 6:
+        return "<img src='six.png'></img>";
+      case 7:
+        return "<img src='seven.png'></img>";
+      case 8:
+        return "<img src='eight.png'></img>";
+      default:
+        alert("Your switch is broken")
+        return "<img src='seychelles.png'></img>"
+    }
+  }
 }
