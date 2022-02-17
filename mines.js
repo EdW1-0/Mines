@@ -2,15 +2,21 @@
 
 let height = 10;
 let width = 10;
+let totalMines = 10;
 
 // To stop the context menu firing when we right click a tile
+// Credit: StackOverflow
 document.addEventListener("contextmenu", function(e){
     e.preventDefault();
 }, false);
 
-
-let table = document.getElementById('grid');
-
+// Used to populate with mines
+// Credit: Javascript.info
+function randomInteger(min, max) {
+  // now rand is from  (min-0.5) to (max+0.5)
+  let rand = min - 0.5 + Math.random() * (max - min + 1);
+  return Math.round(rand);
+}
 
 class Tile
 {
@@ -51,46 +57,75 @@ class Tile
       if (i) {
         mines += i.mine;
       }
-
     }
     return mines
   }
 }
 
-let grid = new Set();
-
-grid.tileAt = function (x, y)
+class Grid
 {
-  let foundTile = null;
-  for (let tile of this){
-    if (tile.x == x && tile.y == y)
+  constructor(width, height) {
+    this.tiles = new Set();
+    this.width = width;
+    this.height = height;
+    this.table = document.getElementById('grid');
+  }
+
+  add (tile) {
+    this.tiles.add(tile);
+  }
+  tileAt(x,y) {
+    let foundTile = null;
+    for (let tile of this.tiles) {
+      if (tile.x == x && tile.y == y)
+      {
+        foundTile = tile;
+        break;
+      }
+    }
+    return foundTile;
+  }
+
+  generateTiles() {
+    for (let i=0; i < this.height; i++)
     {
-      foundTile = tile;
-      break;
+      let tr = document.createElement('tr');
+      this.table.append(tr);
+      for (let j=0; j<this.width; j++)
+      {
+        let tile = new Tile(this, j, i);
+        this.add(tile);
+
+        let td = document.createElement('td');
+
+        td.innerHTML = renderTile(j,i);
+        td.onmousedown = mousedown;
+        tr.append(td);
+      }
     }
   }
 
-  return foundTile;
-};
-
-
-for (let i=0; i < height; i++)
-{
-  let tr = document.createElement('tr');
-  table.append(tr);
-  for (let j=0; j<width; j++)
-  {
-    let tile = new Tile(grid, j, i);
-    if (j==2) tile.mine=true;
-    grid.add(tile);
-
-    let td = document.createElement('td');
-
-    td.innerHTML = renderTile(j,i);
-    td.onmousedown = mousedown;
-    tr.append(td);
+  generateMines(totalMines) {
+    for (let i = 0; i < totalMines; i++) {
+      if (totalMines >= this.width * this.height)
+        alert ("Too many mines!");
+      let tile = null;
+      do {
+        let x = randomInteger(0, this.width-1);
+        let y = randomInteger(0, this.height-1);
+        tile = this.tileAt(x,y);
+      } while (tile.mine)
+      tile.mine = true;
+    }
   }
+
 }
+
+let grid = new Grid(width, height);
+grid.generateTiles();
+grid.generateMines(totalMines);
+
+
 
 function mousedown(event)
 {
@@ -99,7 +134,7 @@ function mousedown(event)
   let y = tr.rowIndex;
   let tile = grid.tileAt(x, y);
   //alert(tile.x + "," + tile.y);
-  let tileWest = tile.west();
+  //let tileWest = tile.west();
   /*if (tileWest){
     alert(tileWest.x + "," + tileWest.y);
   }
