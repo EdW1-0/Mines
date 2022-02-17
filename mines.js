@@ -2,7 +2,7 @@
 
 let height = 10;
 let width = 10;
-let totalMines = 10;
+let totalMines = 20;
 
 // To stop the context menu firing when we right click a tile
 // Credit: StackOverflow
@@ -114,8 +114,57 @@ class Grid
         let x = randomInteger(0, this.width-1);
         let y = randomInteger(0, this.height-1);
         tile = this.tileAt(x,y);
-      } while (tile.mine)
+      } while (tile.mine || tile.cleared)
       tile.mine = true;
+    }
+    this.mined = true;
+  }
+
+  renderTile(x, y) {
+    let html = null;
+
+    let tile = this.tileAt(x, y);
+    if (tile.flag) {
+    html = "<img src='flag.png'></img>"
+  } else if (!tile.cleared) {
+    html = "<img src='hidden.png'></img>"
+  }else if (tile.mine){
+    html = "<img src='mine.png'></img>"
+  }else {
+      let mines = tile.neighbourCount();
+      switch (mines) {
+        case 0:
+        html = "<img src='zero.png'></img>";
+        break;
+        case 1:
+        html = "<img src='one.png'></img>";
+        break;
+        case 2:
+        html = "<img src='two.png'></img>";
+        break;
+        case 3:
+        html = "<img src='three.png'></img>";
+        break;
+        case 4:
+        html = "<img src='four.png'></img>";
+        break;
+        case 5:
+        html = "<img src='five.png'></img>";
+        break;
+        case 6:
+        html = "<img src='six.png'></img>";
+        break;
+        case 7:
+        html = "<img src='seven.png'></img>";
+        break;
+        case 8:
+        html = "<img src='eight.png'></img>";
+        break;
+        default:
+        alert("Your switch is broken")
+        html = "<img src='seychelles.png'></img>"
+        break;
+      }
     }
   }
 
@@ -123,7 +172,7 @@ class Grid
 
 let grid = new Grid(width, height);
 grid.generateTiles();
-grid.generateMines(totalMines);
+//grid.generateMines(totalMines);
 
 
 
@@ -143,8 +192,11 @@ function mousedown(event)
   }*/
 
   if (event.button == 0) {
-    if (!tile.flag)
+    if (!tile.flag) {
       tile.cleared = true;
+      if (!grid.mined)
+        grid.generateMines(totalMines);
+    }
   } else if (event.button == 2) {
     if (!tile.cleared)
       tile.flag = !tile.flag;
