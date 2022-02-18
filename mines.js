@@ -4,6 +4,7 @@ let height = 10;
 let width = 10;
 let totalMines = 20;
 
+let game = null;
 // To stop the context menu firing when we right click a tile
 // Credit: StackOverflow
 document.addEventListener("contextmenu", function(e){
@@ -17,6 +18,33 @@ function randomInteger(min, max) {
   let rand = min - 0.5 + Math.random() * (max - min + 1);
   return Math.round(rand);
 }
+
+
+// Implements state machine
+// States:
+// Idle, Running, Lost, Won
+// Work to be done by this class:
+// Set up a new game when clicked (clearing up previous if necessary)
+// Keep track of win/lose, total mines left
+class Game
+{
+  constructor(width, height, totalMines) {
+    alert("Hi!");
+    this.grid = new Grid(width, height);
+    this.grid.generateTiles();
+    this.state = "Running";
+  }
+
+  win()
+  {
+    alert("You win!");
+  }
+  lose()
+  {
+    alert("You lose!");
+  }
+}
+
 
 class Tile
 {
@@ -98,7 +126,7 @@ class Grid
 
         let td = document.createElement('td');
 
-        td.innerHTML = renderTile(j,i);
+        td.innerHTML = this.renderTile(j,i);
         td.onmousedown = mousedown;
         tr.append(td);
       }
@@ -166,14 +194,13 @@ class Grid
         break;
       }
     }
+    return html;
   }
 
 }
 
-let grid = new Grid(width, height);
-grid.generateTiles();
 //grid.generateMines(totalMines);
-
+game = new Game(width, height, totalMines);
 
 
 function mousedown(event)
@@ -181,7 +208,7 @@ function mousedown(event)
   let tr = this.parentNode;
   let x = this.cellIndex;
   let y = tr.rowIndex;
-  let tile = grid.tileAt(x, y);
+  let tile = game.grid.tileAt(x, y);
   //alert(tile.x + "," + tile.y);
   //let tileWest = tile.west();
   /*if (tileWest){
@@ -194,51 +221,14 @@ function mousedown(event)
   if (event.button == 0) {
     if (!tile.flag) {
       tile.cleared = true;
-      if (!grid.mined)
-        grid.generateMines(totalMines);
+      if (!game.grid.mined)
+        game.grid.generateMines(totalMines);
     }
   } else if (event.button == 2) {
     if (!tile.cleared)
       tile.flag = !tile.flag;
   }
 
-  let html = renderTile(x,y);
+  let html = game.grid.renderTile(x,y);
   this.innerHTML = html;
-}
-
-function renderTile(x, y)
-{
-  let tile = grid.tileAt(x, y);
-  if (tile.flag)
-    return "<img src='flag.png'></img>"
-  else if (!tile.cleared)
-    return "<img src='hidden.png'></img>"
-  else if (tile.mine)
-    return "<img src='mine.png'></img>"
-  else {
-    let mines = tile.neighbourCount();
-    switch (mines) {
-      case 0:
-        return "<img src='zero.png'></img>";
-      case 1:
-        return "<img src='one.png'></img>";
-      case 2:
-        return "<img src='two.png'></img>";
-      case 3:
-        return "<img src='three.png'></img>";
-      case 4:
-        return "<img src='four.png'></img>";
-      case 5:
-        return "<img src='five.png'></img>";
-      case 6:
-        return "<img src='six.png'></img>";
-      case 7:
-        return "<img src='seven.png'></img>";
-      case 8:
-        return "<img src='eight.png'></img>";
-      default:
-        alert("Your switch is broken")
-        return "<img src='seychelles.png'></img>"
-    }
-  }
 }
