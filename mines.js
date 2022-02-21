@@ -11,6 +11,7 @@ document.addEventListener("contextmenu", function(e){
     e.preventDefault();
 }, false);
 
+document.getElementById('easy').onclick = easy;
 // Used to populate with mines
 // Credit: Javascript.info
 function randomInteger(min, max) {
@@ -29,7 +30,6 @@ function randomInteger(min, max) {
 class Game
 {
   constructor(width, height, totalMines) {
-    alert("Hi!");
     this.grid = new Grid(width, height);
     this.grid.generateTiles();
     this.state = "Running";
@@ -115,6 +115,9 @@ class Grid
   }
 
   generateTiles() {
+    let table = document.getElementById('grid');
+    this.table.innerHTML = null;
+
     for (let i=0; i < this.height; i++)
     {
       let tr = document.createElement('tr');
@@ -127,7 +130,7 @@ class Grid
         let td = document.createElement('td');
 
         td.innerHTML = this.renderTile(j,i);
-        td.onmousedown = mousedown;
+        td.onmousedown = tileClick;
         tr.append(td);
       }
     }
@@ -200,10 +203,24 @@ class Grid
 }
 
 //grid.generateMines(totalMines);
-game = new Game(width, height, totalMines);
+//game = new Game(width, height, totalMines);
 
+function easy()
+{
+  game = new Game(9, 9, 10);
+}
 
-function mousedown(event)
+function medium()
+{
+  game = new Game(16, 16, 40);
+}
+
+function hard()
+{
+  game = new Game(16, 30, 99);
+}
+
+function tileClick(event)
 {
   let tr = this.parentNode;
   let x = this.cellIndex;
