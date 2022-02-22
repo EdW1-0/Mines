@@ -1,8 +1,8 @@
 "use strict";
 
-let height = 10;
-let width = 10;
-let totalMines = 20;
+//let height = 10;
+//let width = 10;
+//let totalMines = 20;
 
 let game = null;
 // To stop the context menu firing when we right click a tile
@@ -12,6 +12,8 @@ document.addEventListener("contextmenu", function(e){
 }, false);
 
 document.getElementById('easy').onclick = easy;
+document.getElementById('medium').onclick = medium;
+document.getElementById('hard').onclick = hard;
 // Used to populate with mines
 // Credit: Javascript.info
 function randomInteger(min, max) {
@@ -30,7 +32,7 @@ function randomInteger(min, max) {
 class Game
 {
   constructor(width, height, totalMines) {
-    this.grid = new Grid(width, height);
+    this.grid = new Grid(width, height, totalMines);
     this.grid.generateTiles();
     this.state = "Running";
   }
@@ -42,6 +44,35 @@ class Game
   lose()
   {
     alert("You lose!");
+  }
+
+// Win condition:
+// All non-mined tiles cleared.
+// No mined tiles cleared.
+  checkWin()
+  {
+    for (let tile of this.grid.tiles) {
+      if (tile.cleared && tile.mine)
+      {
+        return false;
+      } else if (!tile.cleared && !tile.mine) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+// Lose condition:
+// There exists at least one tile which is mined and cleared.
+  checkLose()
+  {
+    for (let tile of this.grid.tiles) {
+      if (tile.cleared && tile.mine)
+        return true;
+    }
+
+    return false;
   }
 }
 
@@ -92,11 +123,13 @@ class Tile
 
 class Grid
 {
-  constructor(width, height) {
+  constructor(width, height, totalMines) {
     this.tiles = new Set();
     this.width = width;
     this.height = height;
+    this.totalMines = totalMines;
     this.table = document.getElementById('grid');
+    this.mineCounter = document.getElementById('mineCounter');
   }
 
   add (tile) {
@@ -136,9 +169,9 @@ class Grid
     }
   }
 
-  generateMines(totalMines) {
-    for (let i = 0; i < totalMines; i++) {
-      if (totalMines >= this.width * this.height)
+  generateMines() {
+    for (let i = 0; i < this.totalMines; i++) {
+      if (this.totalMines >= this.width * this.height)
         alert ("Too many mines!");
       let tile = null;
       do {
@@ -149,6 +182,14 @@ class Grid
       tile.mine = true;
     }
     this.mined = true;
+    this.remainingMines = this.totalMines;
+    this.updateMineCounter();
+  }
+
+// TODO: Surely could achieve this through a custom setter.
+  updateMineCounter()
+  {
+    mineCounter.textContent = this.remainingMines;
   }
 
   renderTile(x, y) {
@@ -217,7 +258,7 @@ function medium()
 
 function hard()
 {
-  game = new Game(16, 30, 99);
+  game = new Game(30, 16, 99);
 }
 
 function tileClick(event)
@@ -239,13 +280,28 @@ function tileClick(event)
     if (!tile.flag) {
       tile.cleared = true;
       if (!game.grid.mined)
-        game.grid.generateMines(totalMines);
+        game.grid.generateMines();
     }
   } else if (event.button == 2) {
-    if (!tile.cleared)
-      tile.flag = !tile.flag;
+    if (!tile.cleared) {
+      if (tile.flag) {
+        tile.flag = false;
+        game.grid.remainingMines++;
+        game.grid.updateMineCounter();
+      } else {
+        tile.flag = true;
+        game.grid.remainingMines--;
+        game.grid.updateMineCounter();
+      }
+    }
   }
 
   let html = game.grid.renderTile(x,y);
   this.innerHTML = html;
+
+  if (game.checkLose())
+    game.lose();
+
+  if (game.checkWin())
+    game.win();
 }
