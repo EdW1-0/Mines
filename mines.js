@@ -304,4 +304,19 @@ function tileClick(event)
 
   if (game.checkWin())
     game.win();
+
+  if (tile.cleared && tile.neighbourCount() == 0) {
+    for (let neighbour of tile.neighbours()) {
+      if (neighbour && !neighbour.cleared && !neighbour.flag) {
+
+        let x = neighbour.x;
+        let y = neighbour.y;
+        //alert("clicky!" + x  + "," + y);
+        let td = game.grid.table.rows[y].cells[x];
+        let boundFunc = tileClick.bind(td);
+        boundFunc(event);
+
+      }
+    }
+  }
 }
