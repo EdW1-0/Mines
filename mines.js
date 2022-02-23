@@ -97,6 +97,7 @@ class Tile
   east() {return this.grid.tileAt(this.x+1, this.y);}
   northEast() {return this.grid.tileAt(this.x+1, this.y-1);}
 
+//TODO: should this return array with nulls in for boundaries?
   neighbours() {
     let neighbours = [];
     neighbours.push(this.north());
@@ -163,7 +164,8 @@ class Grid
         let td = document.createElement('td');
 
         td.innerHTML = this.renderTile(j,i);
-        td.onmousedown = tileClick;
+        td.onmousedown = tileMouseDown;
+        td.onmouseup = tileMouseUp;
         tr.append(td);
       }
     }
@@ -261,7 +263,7 @@ function hard()
   game = new Game(30, 16, 99);
 }
 
-function tileClick(event)
+function tileMouseDown(event)
 {
   let tr = this.parentNode;
   let x = this.cellIndex;
@@ -313,10 +315,15 @@ function tileClick(event)
         let y = neighbour.y;
         //alert("clicky!" + x  + "," + y);
         let td = game.grid.table.rows[y].cells[x];
-        let boundFunc = tileClick.bind(td);
+        let boundFunc = tileMouseDown.bind(td);
         boundFunc(event);
 
       }
     }
   }
+}
+
+function tileMouseUp(event)
+{
+
 }
