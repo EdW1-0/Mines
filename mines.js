@@ -35,6 +35,8 @@ class Game
     this.grid = new Grid(width, height, totalMines);
     this.grid.generateTiles();
     this.state = "Running";
+    this.lmbmode = false;
+    this.rmbmode = false;
   }
 
   win()
@@ -111,7 +113,8 @@ class Tile
     return neighbours;
   }
 
-  neighbourCount() {
+// TODO: DRY - could merge these into "propCount" method taking prop name as arg.
+  neighbourMineCount() {
     let mines = 0;
     for (let i of this.neighbours()) {
       if (i) {
@@ -119,6 +122,16 @@ class Tile
       }
     }
     return mines
+  }
+
+  neighbourFlagCount() {
+    let flags = 0;
+    for (let i of this.neighbours()) {
+      if (i) {
+        flags += i.flag;
+      }
+    }
+    return flags;
   }
 }
 
@@ -205,7 +218,7 @@ class Grid
   }else if (tile.mine){
     html = "<img src='mine.png'></img>"
   }else {
-      let mines = tile.neighbourCount();
+      let mines = tile.neighbourMineCount();
       switch (mines) {
         case 0:
         html = "<img src='zero.png'></img>";
@@ -278,13 +291,7 @@ function tileMouseDown(event)
     alert(tileWest);
   }*/
 
-  if (event.button == 0) {
-    if (!tile.flag) {
-      tile.cleared = true;
-      if (!game.grid.mined)
-        game.grid.generateMines();
-    }
-  } else if (event.button == 2) {
+  if (event.button == 2) {
     if (!tile.cleared) {
       if (tile.flag) {
         tile.flag = false;
@@ -296,6 +303,83 @@ function tileMouseDown(event)
         game.grid.updateMineCounter();
       }
     }
+  } else if (event.button == 1) {
+    //alert ("Middle!");
+    //game.mmbDown = true;
+
+  }
+
+  let html = game.grid.renderTile(x,y);
+  this.innerHTML = html;
+
+
+
+
+}
+
+// dclick spec:
+// If lmb pressed
+// track mouseenter
+// highlight cell if unclicked
+// on release of lmb
+// if rmb not pressed, trigger cell
+// If rmb pressed, if on uncleared cell, flag/unflag it.
+// mouseup on rmb just clears mask.
+// If press lmb and rmb simultaneously,
+// on release of either button,
+// if mouse is over number cell AND that number of neighbouurs unflagged
+// click all unflagged neighbours
+// middle click has same effect as lmb/rmb combined
+function tileMouseUp(event)
+{
+  let tr = this.parentNode;
+  let x = this.cellIndex;
+  let y = tr.rowIndex;
+  let tile = game.grid.tileAt(x, y);
+  if (event.button == 0) {
+    if (!tile.flag) {
+      tile.cleared = true;
+      if (!game.grid.mined) {
+        game.grid.generateMines();
+      }
+        // Fast clear if clicked on a zero
+      if (tile.cleared && tile.neighbourMineCount() == 0) {
+          for (let neighbour of tile.neighbours()) {
+            if (neighbour && !neighbour.cleared && !neighbour.flag) {
+
+      // TODO: Closely mirrors middle click code.
+              let x = neighbour.x;
+              let y = neighbour.y;
+              //alert("clicky!" + x  + "," + y);
+              let td = game.grid.table.rows[y].cells[x];
+              let boundFunc = tileMouseUp.bind(td);
+              boundFunc(event);
+
+            }
+          }
+      }
+    }
+  } else if (event.button == 1) {
+    if (tile.cleared) {
+      let mines = tile.neighbourMineCount();
+      let flags = tile.neighbourFlagCount();
+      if (mines == flags) {
+        for (let neighbour of tile.neighbours()) {
+          if (neighbour && !neighbour.cleared) {
+            let x = neighbour.x;
+            let y = neighbour.y;
+            //alert("clicky!" + x  + "," + y);
+            let td = game.grid.table.rows[y].cells[x];
+            let boundFunc = tileMouseUp.bind(td);
+            let spoofEvent = {};
+            Object.assign(spoofEvent, event);
+            spoofEvent.button = 0;
+            boundFunc(spoofEvent);
+          }
+        }
+      }
+
+    }
   }
 
   let html = game.grid.renderTile(x,y);
@@ -306,24 +390,4 @@ function tileMouseDown(event)
 
   if (game.checkWin())
     game.win();
-
-  if (tile.cleared && tile.neighbourCount() == 0) {
-    for (let neighbour of tile.neighbours()) {
-      if (neighbour && !neighbour.cleared && !neighbour.flag) {
-
-        let x = neighbour.x;
-        let y = neighbour.y;
-        //alert("clicky!" + x  + "," + y);
-        let td = game.grid.table.rows[y].cells[x];
-        let boundFunc = tileMouseDown.bind(td);
-        boundFunc(event);
-
-      }
-    }
-  }
-}
-
-function tileMouseUp(event)
-{
-
 }

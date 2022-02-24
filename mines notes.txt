@@ -1,0 +1,9 @@
+mines notes:
+
+- Get mouse state handling fully implemented
+  - Add highlight tile
+- Implement smiley
+- Implement timer
+- Implement proper layout
+- Implement post game view
+- Refactor
