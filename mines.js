@@ -22,6 +22,11 @@ function randomInteger(min, max) {
   return Math.round(rand);
 }
 
+document.getElementById('grid').onmouseover = tileMouseOver;
+document.getElementById('grid').onmouseout = tileMouseOut;
+document.getElementById('grid').onmouseup = gridMouseUp;
+document.getElementById('grid').ondragstart = function() { return false; };
+
 
 // Implements state machine
 // States:
@@ -179,6 +184,7 @@ class Grid
         td.innerHTML = this.renderTile(j,i);
         td.onmousedown = tileMouseDown;
         td.onmouseup = tileMouseUp;
+        td.ondragstart = function() { return false; };
         tr.append(td);
       }
     }
@@ -214,7 +220,10 @@ class Grid
     if (tile.flag) {
     html = "<img src='flag.png'></img>"
   } else if (!tile.cleared) {
-    html = "<img src='hidden.png'></img>"
+    if (tile.highlight)
+      html = "<img src='highlight.png'></img>"
+    else
+      html = "<img src='hidden.png'></img>"
   }else if (tile.mine){
     html = "<img src='mine.png'></img>"
   }else {
@@ -278,6 +287,7 @@ function hard()
 
 function tileMouseDown(event)
 {
+
   let tr = this.parentNode;
   let x = this.cellIndex;
   let y = tr.rowIndex;
@@ -291,7 +301,9 @@ function tileMouseDown(event)
     alert(tileWest);
   }*/
 
-  if (event.button == 2) {
+  if (event.button == 0) {
+    game.lmbmode = true;
+  } else if (event.button == 2) {
     if (!tile.cleared) {
       if (tile.flag) {
         tile.flag = false;
@@ -337,6 +349,7 @@ function tileMouseUp(event)
   let y = tr.rowIndex;
   let tile = game.grid.tileAt(x, y);
   if (event.button == 0) {
+    game.lmbmode = false;
     if (!tile.flag) {
       tile.cleared = true;
       if (!game.grid.mined) {
@@ -390,4 +403,52 @@ function tileMouseUp(event)
 
   if (game.checkWin())
     game.win();
+}
+
+function tileMouseOver(event)
+{
+  let target = event.target.closest('td');
+  if (target) {
+    let tr = target.parentNode;
+    let x = target.cellIndex;
+    let y = tr.rowIndex;
+    console.log("Over " + x + " " + y);
+    target.style.background = "pink";
+
+    let tile = game.grid.tileAt(x, y);
+    // Looks like it's important not to trigger renderTile unless needed - so
+    // take care not to fire it unless it's actually changed. Otherwise we end
+    // up endlessly retriggering.
+    if (game.lmbmode && !tile.highlight) {
+      tile.highlight = true;
+      let html = game.grid.renderTile(x,y);
+      target.innerHTML = html;
+    }
+  }
+}
+
+function tileMouseOut(event)
+{
+  let target = event.target.closest('td');
+  if (target) {
+    let tr = target.parentNode;
+    let x = target.cellIndex;
+    let y = tr.rowIndex;
+    console.log("Out " + x + " " + y);
+    target.style.background = "";
+
+    let tile = game.grid.tileAt(x, y);
+    if (game.lmbmode && tile.highlight) {
+      tile.highlight = false;
+      let html = game.grid.renderTile(x,y);
+      target.innerHTML = html;
+    }
+  }
+}
+
+function gridMouseUp(event)
+{
+  if (event.button == 0) {
+    game.lmbmode = false;
+  }
 }
