@@ -1,9 +1,14 @@
 mines notes:
 
 - Get mouse state handling fully implemented
-  - Add highlight tile
-- Implement smiley
-- Implement timer
-- Implement proper layout
+  - Add highlight tile /
+- Implement smiley /
+- Implement timer /
+- Implement proper layout /
 - Implement post game view
 - Refactor
+- Implement custom mode
+
+solver notes:
+- Need to package API for minesweeper as module callable from other code
+- Work out what interface to game we would need for solver to run.

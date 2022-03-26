@@ -14,6 +14,7 @@ document.addEventListener("contextmenu", function(e){
 document.getElementById('easy').onclick = easy;
 document.getElementById('medium').onclick = medium;
 document.getElementById('hard').onclick = hard;
+document.getElementById('custom').onclick = custom;
 // Used to populate with mines
 // Credit: Javascript.info
 function randomInteger(min, max) {
@@ -323,6 +324,16 @@ function medium()
 function hard()
 {
   makeGame(30, 16, 99);
+}
+
+function custom()
+{
+  let height = document.getElementById("height").value ?? 10;
+  let width = document.getElementById("width").value ?? 10;
+  let mines = document.getElementById("mines").value ?? 5;
+
+  alert(height);
+  makeGame(width, height, mines);
 }
 
 function makeGame(x, y, mines)
