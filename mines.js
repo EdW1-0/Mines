@@ -37,15 +37,35 @@ class Game
     this.grid = new Grid(width, height, totalMines);
     this.grid.generateTiles();
     this.state = "Running";
+    this.time = 0;
+    this.updateTimer();
+    let boundIncrement = this.incrementTime.bind(this);
+    this.timerId = setInterval(boundIncrement, 1000);
+  }
+
+  incrementTime()
+  {
+    this.time++;
+    this.updateTimer();
+  }
+  updateTimer()
+  {
+    document.getElementById('timer').textContent = this.time;
   }
 
   win()
   {
     alert("You win!");
+    this.stop();
   }
   lose()
   {
     alert("You lose!");
+    this.stop();
+  }
+  stop()
+  {
+    clearInterval(this.timerId);
   }
 
 // Win condition:
@@ -144,6 +164,7 @@ class Grid
     this.totalMines = totalMines;
     this.table = document.getElementById('grid');
     this.mineCounter = document.getElementById('mineCounter');
+
   }
 
   add (tile) {
@@ -267,17 +288,24 @@ class Grid
 
 function easy()
 {
-  game = new Game(9, 9, 10);
+  makeGame(9, 9, 10);
 }
 
 function medium()
 {
-  game = new Game(16, 16, 40);
+  makeGame(16, 16, 40);
 }
 
 function hard()
 {
-  game = new Game(30, 16, 99);
+  makeGame(30, 16, 99);
+}
+
+function makeGame(x, y, mines)
+{
+  if (game)
+    game.stop();
+  game = new Game(x, y, mines);
 }
 
 function tileMouseDown(event)
