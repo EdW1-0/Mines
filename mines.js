@@ -24,6 +24,24 @@ function randomInteger(min, max) {
 
 document.getElementById('grid').ondragstart = function() { return false; };
 
+class Smiley
+{
+  constructor() {
+    this.smiley = document.getElementById("smiley");
+  }
+
+  smile() {
+    this.smiley.src = 'smiley.png';
+  }
+
+  cool() {
+    this.smiley.src = 'smiley_shades.png';
+  }
+
+  dead() {
+    this.smiley.src = 'smiley_dead.png';
+  }
+}
 
 // Implements state machine
 // States:
@@ -37,10 +55,14 @@ class Game
     this.grid = new Grid(width, height, totalMines);
     this.grid.generateTiles();
     this.state = "Running";
+
     this.time = 0;
     this.updateTimer();
     let boundIncrement = this.incrementTime.bind(this);
     this.timerId = setInterval(boundIncrement, 1000);
+
+    this.smiley = new Smiley();
+    this.smiley.smile();
   }
 
   incrementTime()
@@ -57,11 +79,13 @@ class Game
   {
     alert("You win!");
     this.stop();
+    this.smiley.cool();
   }
   lose()
   {
     alert("You lose!");
     this.stop();
+    this.smiley.dead();
   }
   stop()
   {
@@ -376,7 +400,7 @@ function tileMouseUp(event)
         game.grid.generateMines();
       }
         // Fast clear if clicked on a zero
-      if (tile.cleared && tile.neighbourMineCount() == 0) {
+      if (tile.cleared && !tile.mine && tile.neighbourMineCount() == 0) {
           for (let neighbour of tile.neighbours()) {
             if (neighbour && !neighbour.cleared && !neighbour.flag) {
 
