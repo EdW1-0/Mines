@@ -12,3 +12,49 @@ mines notes:
 solver notes:
 - Need to package API for minesweeper as module callable from other code
 - Work out what interface to game we would need for solver to run.
+
+
+
+Architecture notes:
+
+Global game Object
+Global click handler assignment
+
+A bunch of global boilerplate to disable drag/drop and context contextmenu
+
+Class smiley
+ - Owns smiley face, sets it as required
+
+Class game
+ - Contains grid, smiley
+ - handles timer
+ - handles win/lose
+
+Class tile
+ - Stores state for tile, ref for grid
+ - has convenience methods to query neighbours
+
+Class grid
+ - Stores refs to table, minecounter
+ - Stores tiles as Set
+ - Provides tile lookup by index
+ - Generate table and grid of tiles, and connect to click handlers
+ - Populate with mines
+ - Keep track of mine counter
+ - render the tile (set the appropriate image)
+
+
+Global functions to create game (easy, hard etc)
+
+Global click handler functions
+tileMouseDown:
+ - this as td - finds tile
+ - Checks event button flag
+ - Business logic on tile and game
+tileMouseUp:
+ - Finds tile
+ - Checks event button flag
+ - Business logic on tile and game
+ - Does fast clear
+ - Does middle click
+ - Check win/lose

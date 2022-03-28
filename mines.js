@@ -44,9 +44,6 @@ class Smiley
   }
 }
 
-// Implements state machine
-// States:
-// Idle, Running, Lost, Won
 // Work to be done by this class:
 // Set up a new game when clicked (clearing up previous if necessary)
 // Keep track of win/lose, total mines left
@@ -206,6 +203,9 @@ class Grid
     }
     return foundTile;
   }
+  cellAt(x,y) {
+    return this.table.rows[y].cells[x];
+  }
 
   generateTiles() {
     let table = document.getElementById('grid');
@@ -221,12 +221,21 @@ class Grid
         this.add(tile);
 
         let td = document.createElement('td');
+        let img = document.createElement('img');
+        td.append(img);
 
-        td.innerHTML = this.renderTile(j,i);
         td.onmousedown = tileMouseDown;
         td.onmouseup = tileMouseUp;
         td.ondragstart = function() { return false; };
         tr.append(td);
+      }
+    }
+
+    for (let i = 0; i < this.height; i++)
+    {
+      for (let j = 0; j < this.width; j++)
+      {
+        this.renderTile(j,i);
       }
     }
   }
@@ -253,57 +262,61 @@ class Grid
   {
     mineCounter.textContent = this.remainingMines;
   }
-
+ // TODO: Could clean this up. No need to create new img tags, just set src on
+ // each and be done. Image paths could be stored in a map - single place to change to
+ // change file paths
   renderTile(x, y) {
     let html = null;
 
     let tile = this.tileAt(x, y);
     if (tile.flag) {
-    html = "<img src='flag.png'></img>"
+    html = "flag.png";
   } else if (!tile.cleared) {
     if (tile.highlight)
-      html = "<img src='highlight.png'></img>"
+      html = 'highlight.png'
     else
-      html = "<img src='hidden.png'></img>"
+      html = 'hidden.png'
   }else if (tile.mine){
-    html = "<img src='mine.png'></img>"
+    html = 'mine.png'
   }else {
       let mines = tile.neighbourMineCount();
       switch (mines) {
         case 0:
-        html = "<img src='zero.png'></img>";
+        html = 'zero.png'
         break;
         case 1:
-        html = "<img src='one.png'></img>";
+        html = 'one.png'
         break;
         case 2:
-        html = "<img src='two.png'></img>";
+        html = 'two.png'
         break;
         case 3:
-        html = "<img src='three.png'></img>";
+        html = 'three.png'
         break;
         case 4:
-        html = "<img src='four.png'></img>";
+        html = 'four.png'
         break;
         case 5:
-        html = "<img src='five.png'></img>";
+        html = 'five.png'
         break;
         case 6:
-        html = "<img src='six.png'></img>";
+        html = 'six.png'
         break;
         case 7:
-        html = "<img src='seven.png'></img>";
+        html = 'seven.png'
         break;
         case 8:
-        html = "<img src='eight.png'></img>";
+        html = 'eight.png'
         break;
         default:
         alert("Your switch is broken")
-        html = "<img src='seychelles.png'></img>"
+        html = 'seychelles.png'
         break;
       }
     }
-    return html;
+
+    let cell = this.cellAt(x,y);
+    cell.firstChild.src = html;
   }
 
 }
@@ -328,9 +341,9 @@ function hard()
 
 function custom()
 {
-  let height = document.getElementById("height").value ?? 10;
-  let width = document.getElementById("width").value ?? 10;
-  let mines = document.getElementById("mines").value ?? 5;
+  let height = document.getElementById("height").value;
+  let width = document.getElementById("width").value;
+  let mines = document.getElementById("mines").value;
 
   alert(height);
   makeGame(width, height, mines);
@@ -377,12 +390,7 @@ function tileMouseDown(event)
 
   }
 
-  let html = game.grid.renderTile(x,y);
-  this.innerHTML = html;
-
-
-
-
+  game.grid.renderTile(x,y);
 }
 
 // dclick spec:
@@ -400,6 +408,7 @@ function tileMouseDown(event)
 // middle click has same effect as lmb/rmb combined
 function tileMouseUp(event)
 {
+  // TODO: Duplicate code - could pull to convenience function
   let tr = this.parentNode;
   let x = this.cellIndex;
   let y = tr.rowIndex;
@@ -419,7 +428,7 @@ function tileMouseUp(event)
               let x = neighbour.x;
               let y = neighbour.y;
               //alert("clicky!" + x  + "," + y);
-              let td = game.grid.table.rows[y].cells[x];
+              let td = game.grid.cellAt(x,y);
               let boundFunc = tileMouseUp.bind(td);
               boundFunc(event);
 
@@ -437,7 +446,7 @@ function tileMouseUp(event)
             let x = neighbour.x;
             let y = neighbour.y;
             //alert("clicky!" + x  + "," + y);
-            let td = game.grid.table.rows[y].cells[x];
+            let td = game.grid.cellAt(x,y);
             let boundFunc = tileMouseUp.bind(td);
             let spoofEvent = {};
             Object.assign(spoofEvent, event);
@@ -450,8 +459,7 @@ function tileMouseUp(event)
     }
   }
 
-  let html = game.grid.renderTile(x,y);
-  this.innerHTML = html;
+  game.grid.renderTile(x,y);
 
   if (game.checkLose())
     game.lose();
