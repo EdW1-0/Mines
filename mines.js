@@ -1,21 +1,11 @@
 "use strict";
 
 
-// To stop the context menu firing when we right click a tile
-// Credit: StackOverflow
-document.addEventListener("contextmenu", function(e){
-    e.preventDefault();
-}, false);
 
-// Used to populate with mines
-// Credit: Javascript.info
-function randomInteger(min, max) {
-  // now rand is from  (min-0.5) to (max+0.5)
-  let rand = min - 0.5 + Math.random() * (max - min + 1);
-  return Math.round(rand);
-}
 
-document.getElementById('grid').ondragstart = function() { return false; };
+
+
+
 
 class Smiley
 {
@@ -256,16 +246,13 @@ class Tile
       }
     }
 
+    this.grid.renderTile(this.x,this.y);
 
-
-
-      this.grid.renderTile(this.x,this.y);
-
-      // TODO: Put these in game and use bubbling
-      if (Game.game.checkLose())
+    // TODO: Put these in game and use bubbling
+    if (Game.game.checkLose())
       Game.game.lose();
 
-      if (Game.game.checkWin())
+    if (Game.game.checkWin())
       Game.game.win();
 
   }
@@ -273,6 +260,24 @@ class Tile
 
 class Grid
 {
+  static {
+    // To stop the context menu firing when we right click a tile
+    // Credit: StackOverflow
+    document.addEventListener("contextmenu", function(e){
+        e.preventDefault();
+    }, false);
+    // To stop drag/drop trying to engage when we click a tile and don't release before dragging.
+    document.getElementById('grid').ondragstart = function() { return false; };
+  }
+
+  // Used to populate with mines
+  // Credit: Javascript.info
+  static randomInteger(min, max) {
+    // now rand is from  (min-0.5) to (max+0.5)
+    let rand = min - 0.5 + Math.random() * (max - min + 1);
+    return Math.round(rand);
+  }
+
   constructor(width, height, totalMines) {
     this.tiles = new Set();
     this.width = width;
@@ -280,7 +285,6 @@ class Grid
     this.totalMines = totalMines;
     this.table = document.getElementById('grid');
     this.mineCounter = document.getElementById('mineCounter');
-
   }
 
   add (tile) {
@@ -342,8 +346,8 @@ class Grid
         alert ("Too many mines!");
       let tile = null;
       do {
-        let x = randomInteger(0, this.width-1);
-        let y = randomInteger(0, this.height-1);
+        let x = Grid.randomInteger(0, this.width-1);
+        let y = Grid.randomInteger(0, this.height-1);
         tile = this.tileAt(x,y);
       } while (tile.mine || tile.cleared)
       tile.mine = true;
@@ -414,5 +418,4 @@ class Grid
     let cell = this.cellAt(x,y);
     cell.firstChild.src = html;
   }
-
 }
