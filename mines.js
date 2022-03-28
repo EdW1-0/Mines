@@ -1,8 +1,5 @@
 "use strict";
 
-//let height = 10;
-//let width = 10;
-//let totalMines = 20;
 
 // To stop the context menu firing when we right click a tile
 // Credit: StackOverflow
@@ -10,10 +7,6 @@ document.addEventListener("contextmenu", function(e){
     e.preventDefault();
 }, false);
 
-document.getElementById('easy').onclick = easy;
-document.getElementById('medium').onclick = medium;
-document.getElementById('hard').onclick = hard;
-document.getElementById('custom').onclick = custom;
 // Used to populate with mines
 // Credit: Javascript.info
 function randomInteger(min, max) {
@@ -49,11 +42,39 @@ class Smiley
 class Game
 {
   static game = null;
+  static {
+    document.getElementById('easy').onclick = this.easy;
+    document.getElementById('medium').onclick = this.medium;
+    document.getElementById('hard').onclick = this.hard;
+    document.getElementById('custom').onclick = this.custom;
+  }
+
   static makeGame(x, y, mines)
   {
     if (this.game)
       this.game.stop();
     this.game = new this(x, y, mines);
+  }
+
+  static easy()
+  {
+    Game.makeGame(9, 9, 10);
+  }
+  static medium()
+  {
+    Game.makeGame(16, 16, 40);
+  }
+  static hard()
+  {
+    Game.makeGame(30, 16, 99);
+  }
+  static custom()
+  {
+    let height = document.getElementById("height").value;
+    let width = document.getElementById("width").value;
+    let mines = document.getElementById("mines").value;
+
+    Game.makeGame(width, height, mines);
   }
 
   constructor(width, height, totalMines) {
@@ -394,33 +415,4 @@ class Grid
     cell.firstChild.src = html;
   }
 
-}
-
-//grid.generateMines(totalMines);
-//game = new Game(width, height, totalMines);
-
-//TODO: Make these class methods on Game
-function easy()
-{
-  Game.makeGame(9, 9, 10);
-}
-
-function medium()
-{
-  Game.makeGame(16, 16, 40);
-}
-
-function hard()
-{
-  Game.makeGame(30, 16, 99);
-}
-
-function custom()
-{
-  let height = document.getElementById("height").value;
-  let width = document.getElementById("width").value;
-  let mines = document.getElementById("mines").value;
-
-  alert(height);
-  Game.makeGame(width, height, mines);
 }
