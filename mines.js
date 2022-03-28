@@ -79,6 +79,10 @@ class Game
 
     this.smiley = new Smiley();
     this.smiley.smile();
+
+    // TODO: Done here to catch the win/lose checks, but consider if this either
+    // belongs to grid or else should be on higher object (div? document?)
+    document.getElementById("grid").onmouseup = this.mouseUp.bind(this);
   }
 
   incrementTime()
@@ -114,14 +118,12 @@ class Game
   checkWin()
   {
     for (let tile of this.grid.tiles) {
-      if (tile.cleared && tile.mine)
-      {
+      if (tile.cleared && tile.mine) {
         return false;
       } else if (!tile.cleared && !tile.mine) {
         return false;
       }
     }
-
     return true;
   }
 
@@ -133,8 +135,15 @@ class Game
       if (tile.cleared && tile.mine)
         return true;
     }
-
     return false;
+  }
+
+  mouseUp(event) {
+    if (this.checkLose())
+      this.lose();
+
+    if (this.checkWin())
+      this.win();
   }
 }
 
@@ -247,14 +256,6 @@ class Tile
     }
 
     this.grid.renderTile(this.x,this.y);
-
-    // TODO: Put these in game and use bubbling
-    if (Game.game.checkLose())
-      Game.game.lose();
-
-    if (Game.game.checkWin())
-      Game.game.win();
-
   }
 }
 
