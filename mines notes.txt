@@ -17,22 +17,32 @@ solver notes:
 
 Architecture notes:
 
-Global game Object
-Global click handler assignment
-
-A bunch of global boilerplate to disable drag/drop and context contextmenu
 
 Class smiley
  - Owns smiley face, sets it as required
 
 Class game
+ - Static functions to create game (easy, hard etc)
  - Contains grid, smiley
  - handles timer
  - handles win/lose
+ - click handler for grid: Check win/lose
 
 Class tile
  - Stores state for tile, ref for grid
  - has convenience methods to query neighbours
+ - click handler functions
+  mouseDown:
+ - this as td - finds tile
+ - Checks event button flag
+ - Business logic on tile and game
+  mouseUp:
+ - Finds tile
+ - Checks event button flag
+ - Business logic on tile and game
+ - Does fast clear
+ - Does middle click
+
 
 Class grid
  - Stores refs to table, minecounter
@@ -42,19 +52,3 @@ Class grid
  - Populate with mines
  - Keep track of mine counter
  - render the tile (set the appropriate image)
-
-
-Global functions to create game (easy, hard etc)
-
-Global click handler functions
-tileMouseDown:
- - this as td - finds tile
- - Checks event button flag
- - Business logic on tile and game
-tileMouseUp:
- - Finds tile
- - Checks event button flag
- - Business logic on tile and game
- - Does fast clear
- - Does middle click
- - Check win/lose
