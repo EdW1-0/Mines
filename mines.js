@@ -8,15 +8,15 @@ class Smiley
   }
 
   smile() {
-    this.smiley.src = 'smiley.png';
+    this.smiley.src = 'images/smiley.png';
   }
 
   cool() {
-    this.smiley.src = 'smiley_shades.png';
+    this.smiley.src = 'images/smiley_shades.png';
   }
 
   dead() {
-    this.smiley.src = 'smiley_dead.png';
+    this.smiley.src = 'images/smiley_dead.png';
   }
 }
 
@@ -373,47 +373,47 @@ class Grid
 
     let tile = this.tileAt(x, y);
     if (tile.flag) {
-    html = "flag.png";
+    html = "images/flag.png";
   } else if (!tile.cleared) {
     if (tile.highlight)
-      html = 'highlight.png'
+      html = 'images/highlight.png'
     else
-      html = 'hidden.png'
+      html = 'images/hidden.png'
   }else if (tile.mine){
-    html = 'mine.png'
+    html = 'images/mine.png'
   }else {
       let mines = tile.neighbourMineCount();
       switch (mines) {
         case 0:
-        html = 'zero.png'
+        html = 'images/zero.png'
         break;
         case 1:
-        html = 'one.png'
+        html = 'images/one.png'
         break;
         case 2:
-        html = 'two.png'
+        html = 'images/two.png'
         break;
         case 3:
-        html = 'three.png'
+        html = 'images/three.png'
         break;
         case 4:
-        html = 'four.png'
+        html = 'images/four.png'
         break;
         case 5:
-        html = 'five.png'
+        html = 'images/five.png'
         break;
         case 6:
-        html = 'six.png'
+        html = 'images/six.png'
         break;
         case 7:
-        html = 'seven.png'
+        html = 'images/seven.png'
         break;
         case 8:
-        html = 'eight.png'
+        html = 'images/eight.png'
         break;
         default:
         alert("Your switch is broken")
-        html = 'seychelles.png'
+        html = 'images/seychelles.png'
         break;
       }
     }
