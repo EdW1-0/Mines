@@ -4,7 +4,6 @@
 //let width = 10;
 //let totalMines = 20;
 
-let game = null;
 // To stop the context menu firing when we right click a tile
 // Credit: StackOverflow
 document.addEventListener("contextmenu", function(e){
@@ -49,6 +48,14 @@ class Smiley
 // Keep track of win/lose, total mines left
 class Game
 {
+  static game = null;
+  static makeGame(x, y, mines)
+  {
+    if (this.game)
+      this.game.stop();
+    this.game = new this(x, y, mines);
+  }
+
   constructor(width, height, totalMines) {
     this.grid = new Grid(width, height, totalMines);
     this.grid.generateTiles();
@@ -234,11 +241,11 @@ class Tile
       this.grid.renderTile(this.x,this.y);
 
       // TODO: Put these in game and use bubbling
-      if (game.checkLose())
-      game.lose();
+      if (Game.game.checkLose())
+      Game.game.lose();
 
-      if (game.checkWin())
-      game.win();
+      if (Game.game.checkWin())
+      Game.game.win();
 
   }
 }
@@ -395,17 +402,17 @@ class Grid
 //TODO: Make these class methods on Game
 function easy()
 {
-  makeGame(9, 9, 10);
+  Game.makeGame(9, 9, 10);
 }
 
 function medium()
 {
-  makeGame(16, 16, 40);
+  Game.makeGame(16, 16, 40);
 }
 
 function hard()
 {
-  makeGame(30, 16, 99);
+  Game.makeGame(30, 16, 99);
 }
 
 function custom()
@@ -415,12 +422,5 @@ function custom()
   let mines = document.getElementById("mines").value;
 
   alert(height);
-  makeGame(width, height, mines);
-}
-
-function makeGame(x, y, mines)
-{
-  if (game)
-    game.stop();
-  game = new Game(x, y, mines);
+  Game.makeGame(width, height, mines);
 }
