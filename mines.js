@@ -1,12 +1,6 @@
 "use strict";
 
 
-
-
-
-
-
-
 class Smiley
 {
   constructor() {
@@ -209,12 +203,10 @@ class Tile
           if (this.flag) {
             this.flag = false;
             // TODO: This should be internal to grid
-            this.grid.remainingMines++;
-            this.grid.updateMineCounter();
+            this.grid.incrementMineCount();
           } else {
             this.flag = true;
-            this.grid.remainingMines--;
-            this.grid.updateMineCounter();
+            this.grid.decrementMineCount();
           }
         }
       }
@@ -359,6 +351,16 @@ class Grid
   }
 
 // TODO: Surely could achieve this through a custom setter.
+  incrementMineCount()
+  {
+    this.remainingMines++;
+    this.updateMineCounter();
+  }
+  decrementMineCount()
+  {
+    this.remainingMines--;
+    this.updateMineCounter();
+  }
   updateMineCounter()
   {
     mineCounter.textContent = this.remainingMines;
