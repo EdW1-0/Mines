@@ -12,6 +12,12 @@ mines notes:
 solver notes:
 - Need to package API for minesweeper as module callable from other code
 - Work out what interface to game we would need for solver to run.
+- How to do solving:
+   - In cleared cells,
+      - Check if number of neighbouring mines == number of neigbouring hidden
+          - Flag hidden
+      - Check if number of flagged hidden == number of neighbouring mines
+          - Clear unflagged hidden
 
 
 
