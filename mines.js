@@ -7,7 +7,7 @@ import Grid from './grid.js'
 // Work to be done by this class:
 // Set up a new game when clicked (clearing up previous if necessary)
 // Keep track of win/lose, total mines left
-class Game
+export default class Game
 {
   static game = null;
   static {
