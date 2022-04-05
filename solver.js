@@ -1,6 +1,8 @@
 import Game from "./mines.js"
 
 document.getElementById("solve").onclick = solve;
+document.getElementById("stop").onclick = stop;
+document.getElementById("tick").onclick = pulse;
 
 let timerId = null;
 
@@ -8,12 +10,19 @@ function solve()
 {
     console.log("Solving!");
     if (Game.game) {
-       firstClick(Game.game);
+        if (!Game.game.grid.mined)
+          firstClick(Game.game);
 
-       timerId = setInterval(pulse, 5000);
+        timerId = setInterval(pulse, 5000);
     }
     else
-       alert("Not instantiated yet");
+        alert("Not instantiated yet");
+}
+
+function stop()
+{
+    if (timerId)
+        clearTimeout(timerId);
 }
 
 function firstClick(game)
@@ -22,7 +31,7 @@ function firstClick(game)
 
     // Pick a cell at random
     let cell = grid.randomCell();
-    const ev = new MouseEvent("mouseup", {button:0});
+    const ev = new MouseEvent("mouseup", {button:0, bubbles:true});
 
 
     cell.dispatchEvent(ev);
@@ -116,7 +125,7 @@ function clickTile(tile, button)
     let y = tile.y;
     let cell = grid.cellAt(x,y);
     let type = button ? "mousedown": "mouseup";
-    const ev = new MouseEvent(type, {button: button});
+    const ev = new MouseEvent(type, {button: button, bubbles:true});
 
 
     cell.dispatchEvent(ev);
