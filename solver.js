@@ -15,7 +15,8 @@ function firstClick(game)
 {
     let grid = game.grid;
 
-    let cell = grid.cellAt(0,0);
+    // Pick a cell at random
+    let cell = grid.randomCell();
     const ev = new MouseEvent("mouseup", {button:0});
 
 

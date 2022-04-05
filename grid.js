@@ -46,6 +46,11 @@ export default class Grid
   cellAt(x,y) {
     return this.table.rows[y].cells[x];
   }
+  randomCell() {
+    let x = Grid.randomInteger(0, this.width-1);
+    let y = Grid.randomInteger(0, this.height-1);
+    return this.cellAt(x,y);
+  }
 
   generateTiles() {
     let table = document.getElementById('grid');
